@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+//import javax.swing.filechooser.FileNameExtensionFilter;
 
 /*
 Introduction: In this assignment you will create a Java program that takes the place of a physical photo album.
@@ -27,82 +28,54 @@ More specifically your program should provide the following features:
 public class photo_viewer extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
-	
 	private JButton next = new JButton("NEXT");
 	private JButton prev = new JButton ("PREV");
-	private int count = 0;
-	private String update= "0";
+	private int count = 1;
+	private String update= "1";
 	private JLabel counter = new JLabel(update);
-	private JMenuItem browse = new JMenuItem("Browse");
+	private JMenu browse = new JMenu("Browse");
 	private JMenuItem maintain = new JMenuItem("Maintain");
+	private JMenuItem select = new JMenuItem("Select Photo");
 	private JMenuItem exitMenuItem = new JMenuItem("Exit",KeyEvent.VK_X);
-	
-	public static void main(String[] args){
-		JFrame photo=new photo_viewer();
-		
-		photo.setLocationRelativeTo(null);
-		//photo.setSize(800, 500);
-		photo.pack();
-		photo.setVisible(true);
-		photo.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-	}
-	
+	private JMenuItem save = new JMenuItem("Save", KeyEvent.VK_S);
+	JTextArea info = new JTextArea(5,30);
+	JTextField date = new JTextField(1);
+	private Maintain maint = new Maintain();
+	private Browse brow = new Browse();
+	Container middle = new JPanel();
+	Container imageLabel = null;
+	Model model = new Model();
+
 	public photo_viewer(){
 		
-		this.setLocationRelativeTo(null);
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Photo Viewer");
-		
-		//Create menu bar.
+	
 		JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
-       // Create the first menu.
         JMenu menu = new JMenu("File");
         menu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menu);
-        // Create an item for the first menu
+        save.addActionListener(this);
+        menu.add(save);
         exitMenuItem.addActionListener(this);
         menu.add(exitMenuItem);    
-        // Create the second menu.
         JMenu view = new JMenu("View");
         view.setMnemonic(KeyEvent.VK_V);
         menuBar.add(view);
-        //Create items for second menu.
-        browse.addActionListener(this);
         view.add(browse);
-        maintain.addActionListener(this);
+        maintain.addActionListener(e->maint.MaintAction());
         view.add(maintain);
-        
-        //Create main container for JFrame.
-        Container content = getContentPane();
-	
-        //Create image container
-		JLabel imageLabel = new JLabel("", SwingConstants.CENTER);
-		Border titledBorder = BorderFactory.createTitledBorder("");
-        imageLabel.setBorder(titledBorder);
-		JScrollPane scrollPane = new JScrollPane(imageLabel);
-		
-		//Add image to container
-		ImageIcon image = new ImageIcon("Leo.jpg");
-		imageLabel.setIcon(image);
-		
-		content.add(scrollPane);
-		
-		//container that will hold description and date container, and
-		//numb of pic info, next, and prev button container
-		Container bottom = Box.createVerticalBox();
-		
-		Container middle = new JPanel();
+        select.addActionListener(e->brow.BrowseAction());
+        browse.add(select);
+
+        Container image = getContentPane();
+		Container bottom = Box.createVerticalBox();	
 		Container lmiddle = Box.createVerticalBox();
 		Container description = Box.createVerticalBox();
-		
-		JTextArea info = new JTextArea(5,30);
-		JTextField date = new JTextField(1);
+		imageLabel = model.Model();
+		image.add(imageLabel);
 		JLabel infoLabel = new JLabel("Description");
 		info.setEditable(false);
 		date.setEditable(false);
@@ -119,6 +92,7 @@ public class photo_viewer extends JFrame implements ActionListener{
 		lmiddle.add(dateLabel);
 		middle.add(lmiddle,BorderLayout.WEST);
 		middle.add(description,BorderLayout.EAST);
+		middle.add(maint.Maintain());
 	
 		Box buttonBox = Box.createHorizontalBox();
 		next.addActionListener(this);
@@ -133,59 +107,50 @@ public class photo_viewer extends JFrame implements ActionListener{
 		buttonBox.add(next);
 		Border titledBorder1 = BorderFactory.createTitledBorder("");
 		buttonBox.setBorder(titledBorder1);
-		//Add to bottom container.
 		bottom.add(middle);
 		bottom.add(buttonBox);
-		//Add to main container.
-		content.add(bottom, BorderLayout.SOUTH);
-		
+		image.add(bottom, BorderLayout.SOUTH);
 		this.setVisible(true);
 	}	
 
-//lambda expression added to each event to call a function
-	//set the function in a new class called event handler
-	//ex. button1.addActionListener(e-> buttonclick());
 	@Override
 	public void actionPerformed(ActionEvent evt){ 
 		if(evt.getSource()==next){
 			if(count<5){
-				++count;
+				count++;
 				counter.setText(Integer.toString(count));
-				prev.setEnabled(true);
+				if (count == 2){
+					prev.setEnabled(true);
+				}
 				System.out.println(count);
-			}
-			else if (count==5){
-				next.setEnabled(false);
-				System.out.println("NO");
 			}
 			System.out.println("next");
 		}
 		else if (evt.getSource() == prev){
-			if(count>0){
-				--count;
+			if(count>1){
+				count--;
 				counter.setText(Integer.toString(count));
-				next.setEnabled(true);
+				if (count==4){
+					next.setEnabled(true);
+				}
 				System.out.println(count);
-			}
-			else if (count ==0){
-				System.out.println("NO");
-				prev.setEnabled(false);
 			}
 			System.out.println("prev");
 		}
-		else if (evt.getSource() == browse){
-			System.out.println("browse");
-		}
-		else if (evt.getSource() == maintain){
-			System.out.println("maintain");
+		else if (evt.getSource() ==save){
+			System.out.println("save");
+			final JPanel panel = new JPanel();
+			JOptionPane.showMessageDialog(panel, "Save Changes and Quit?", "Question",
+			        JOptionPane.INFORMATION_MESSAGE);
 		}
 		else if(evt.getSource() == exitMenuItem){
 			System.exit(0);
 		}
-		else{
-			System.out.println("Error: " + evt);
+		if (count <=1){
+			prev.setEnabled(false);
+		}
+		else if (count >=5){
+			next.setEnabled(false);
 		}
 	}	
 }
-	
-
