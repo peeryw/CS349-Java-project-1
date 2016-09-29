@@ -53,22 +53,22 @@ public class photo_viewer extends JFrame implements ActionListener{
 		this.setTitle("Photo Viewer");
 	
 		JMenuBar menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
-        JMenu menu = new JMenu("File");
-        menu.setMnemonic(KeyEvent.VK_F);
-        menuBar.add(menu);
-        save.addActionListener(this);
-        menu.add(save);
-        exitMenuItem.addActionListener(this);
-        menu.add(exitMenuItem);    
-        JMenu view = new JMenu("View");
-        view.setMnemonic(KeyEvent.VK_V);
-        menuBar.add(view);
-        view.add(browse);
-        maintain.addActionListener(e->maint.MaintAction());
-        view.add(maintain);
-        select.addActionListener(e->brow.BrowseAction());
-        browse.add(select);
+        	setJMenuBar(menuBar);
+        	JMenu menu = new JMenu("File");
+       		menu.setMnemonic(KeyEvent.VK_F);
+        	menuBar.add(menu);
+        	save.addActionListener(this);
+        	menu.add(save);
+        	exitMenuItem.addActionListener(this);
+        	menu.add(exitMenuItem);    
+        	JMenu view = new JMenu("View");
+        	view.setMnemonic(KeyEvent.VK_V);
+        	menuBar.add(view);
+        	view.add(browse);
+        	maintain.addActionListener(e->maint.MaintAction());
+        	view.add(maintain);
+        	select.addActionListener(e->brow.BrowseAction());
+        	browse.add(select);
 
         Container image = getContentPane();
 		Container bottom = Box.createVerticalBox();	
